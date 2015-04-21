@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
+import java.lang.reflect.Method;
+
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
@@ -44,6 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     private String ON_COMMAND = "on";
     private String OFF_COMMAND = "off";
+    private String readMessage;
 
     /**
      * Name of the connected device
@@ -68,6 +72,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private Button mSwitch;
     private Boolean mIsClicked = false;
     WifiManager wifi;
+    ConnectivityManager dataManager;
+    Handler mainHandler;
+
+    TextView wifistate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +91,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
             this.finish();
         }
 
+         mainHandler = new Handler(Looper.getMainLooper());
          wifi = (WifiManager) this.getSystemService(getApplicationContext().WIFI_SERVICE);
+
+
+        wifistate = (TextView) findViewById(R.id.textView_wifistate);
+
+        if(wifi.isWifiEnabled()){
+            wifistate.setText("right now wifi is ON");
+        }else {
+            wifistate.setText("right now wifi is OFF");
+        }
 
          mSwitch = (Button) findViewById(R.id.imageButton_switch);
          mSwitch.setOnClickListener(this);
@@ -207,25 +225,47 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 case Constants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
+                    final String writeMessage = new String(writeBuf);
+
+                    Runnable StateRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            wifistate.setText("WiFi state turned  " + writeMessage.toString());
+                        }
+                    };
+                    mainHandler.post(StateRunnable);
+
                     break;
                 case Constants.MESSAGE_READ:
                     //isConnected();
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.e("rahul","readMessage is "+readMessage);
-                    if(ON_COMMAND == readMessage){
-                        Log.e("rahul","inside ON_COMMAND if");
+                    readMessage = new String(readBuf, 0, msg.arg1);
+                    Log.e("rahul", "readMessage is " + readMessage);
+
+                    if (readMessage.toString().equalsIgnoreCase(ON_COMMAND)) {
+                        Log.e("rahul", "inside ON_COMMAND");
                         if(!wifi.isWifiEnabled()) {
-                            Log.e("rahul","when wifi is not enabled");
-                            wifi.setWifiEnabled(true);
+                            Runnable OnRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    wifi.setWifiEnabled(true);
+                                    wifistate.setText("WiFi state turned  " + readMessage.toString());
+                                }
+                            };
+                            mainHandler.post(OnRunnable);
                         }
-                    } else if(OFF_COMMAND == readMessage){
-                        Log.e("rahul","inside OFF_COMMAND if");
+                    } else if (readMessage.toString().equalsIgnoreCase(OFF_COMMAND)) {
+                        Log.e("rahul", "inside OFF_COMMAND");
                         if(wifi.isWifiEnabled()) {
-                            Log.e("rahul","when wifi is not enabled");
-                            wifi.setWifiEnabled(false);
+                            Runnable OnRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    wifi.setWifiEnabled(false);
+                                    wifistate.setText("WiFi state turned  " + readMessage.toString());
+                                }
+                            };
+                            mainHandler.post(OnRunnable);
                         }
                     }
                     break;

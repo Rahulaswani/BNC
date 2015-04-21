@@ -17,7 +17,7 @@
 package com.rahulaswani.bnc;
 
 /**
- * Defines several constants used between {@link BluetoothService} and the UI.
+ * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
 public interface Constants {
 
