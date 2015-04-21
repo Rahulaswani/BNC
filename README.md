@@ -15,9 +15,9 @@ Step 3 : click on the button in Phone-1 to turn wifi on and off in Phone-2
 
 <table>
   <tr>
-    <td><img src="https://github.com/Rahulaswani/BNC/blob/master/Screenshots/screen1.png" align="left" height="450" width="270" ></td>
-    <td><img src="https://github.com/Rahulaswani/BNC/blob/master/Screenshots/screen2.png" align="left" height="450" width="270" ></td>
-    <td><img src="https://github.com/Rahulaswani/BNC/blob/master/Screenshots/screen3 corrected.png" align="left" height="450" width="270" ></td>
+    <td><img src="https://github.com/Rahulaswani/BNC/blob/master/Screenshots/screen1.png" align="left" height="400" width="270" ></td>
+    <td><img src="https://github.com/Rahulaswani/BNC/blob/master/Screenshots/screen2.png" align="left" height="400" width="270" ></td>
+    <td><img src="https://github.com/Rahulaswani/BNC/blob/master/Screenshots/screen3 corrected.png" align="left" height="400" width="270" ></td>
   </tr>
 </table>
 
